@@ -9,7 +9,7 @@ RUN \
   apk add \
     git \
     go
-    
+
 RUN \
   echo "**** build fs-repo-migrations ****" && \
   mkdir -p /build-out/usr/bin && \
