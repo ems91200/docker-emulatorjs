@@ -5,11 +5,11 @@ FROM ghcr.io/linuxserver/baseimage-alpine:3.20 AS migrationbuilder
 
 RUN \
   echo "**** install build packages ****" && \
-  apk update && \ # Added apk update
+  apk update && \
   apk add \
     git \
     go
-
+    
 RUN \
   echo "**** build fs-repo-migrations ****" && \
   mkdir -p /build-out/usr/bin && \
