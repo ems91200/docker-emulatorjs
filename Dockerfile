@@ -1,11 +1,9 @@
 # syntax=docker/dockerfile:1
 
-# Using a more recent stable Alpine base for migrationbuilder
-FROM ghcr.io/linuxserver/baseimage-alpine:3.20 AS migrationbuilder
+FROM ghcr.io/linuxserver/baseimage-alpine:3.20 as migrationbuilder
 
 RUN \
   echo "**** install build packages ****" && \
-  apk update && \
   apk add \
     git \
     go
@@ -16,18 +14,16 @@ RUN \
   git clone https://github.com/ipfs/fs-repo-migrations.git && \
   cd fs-repo-migrations && \
   for BUILD in fs-repo-migrations fs-repo-9-to-10 fs-repo-10-to-11 fs-repo-11-to-12; do \
-    cd "${BUILD}" && \
+    cd ${BUILD} && \
     go build && \
-    mv "fs-repo-*" /build-out/usr/bin/ && \
+    mv fs-repo-* /build-out/usr/bin/ && \
     cd .. ; \
   done
 
-# Using a more recent stable Alpine base for binbuilder
-FROM ghcr.io/linuxserver/baseimage-alpine:3.20 AS binbuilder
+FROM ghcr.io/linuxserver/baseimage-alpine:3.20 as binbuilder
 
 RUN \
   echo "**** install build packages ****" && \
-  apk update && \ # Added apk update
   apk add \
     git \
     go
@@ -59,20 +55,18 @@ RUN \
   git clone https://github.com/ipfs/fs-repo-migrations.git && \
   cd fs-repo-migrations && \
   for BUILD in fs-repo-migrations fs-repo-12-to-13 fs-repo-13-to-14 fs-repo-14-to-15; do \
-    cd "${BUILD}" && \
+    cd ${BUILD} && \
     go build && \
-    mv "fs-repo-*" /build-out/usr/bin/ && \
+    mv fs-repo-* /build-out/usr/bin/ && \
     cd .. ; \
   done
 
-# Using a more recent stable Alpine base for nodebuilder
-FROM ghcr.io/linuxserver/baseimage-alpine:3.20 AS nodebuilder
+FROM ghcr.io/linuxserver/baseimage-alpine:3.20 as nodebuilder
 
 ARG EMULATORJS_RELEASE
 
 RUN \
   echo "**** install build packages ****" && \
-  apk update && \ # Added apk update
   apk add \
     nodejs \
     npm \
@@ -82,7 +76,7 @@ RUN \
 RUN \
   echo "**** grab emulatorjs ****" && \
   mkdir /emulatorjs && \
-  if [ -z "${EMULATORJS_RELEASE+x}" ]; then \ # Added quotes for robustness
+  if [ -z ${EMULATORJS_RELEASE+x} ]; then \
     EMULATORJS_RELEASE=$(curl -sX GET "https://api.github.com/repos/linuxserver/emulatorjs/releases/latest" \
       | awk '/tag_name/{print $4;exit}' FS='[""]'); \
   fi && \
@@ -118,7 +112,7 @@ RUN \
   npm install
 
 # runtime stage
-FROM ghcr.io/linuxserver/baseimage-alpine:3.20 # Using a more recent stable Alpine base
+FROM ghcr.io/linuxserver/baseimage-alpine:3.20
 
 # set version label
 ARG BUILD_DATE
@@ -128,7 +122,6 @@ LABEL maintainer="thelamer"
 
 RUN \
   echo "**** install runtime packages ****" && \
-  apk update && \ # Added apk update
   apk add --no-cache \
     file \
     flac \
